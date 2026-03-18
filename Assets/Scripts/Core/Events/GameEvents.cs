@@ -12,6 +12,9 @@ namespace Game.Core.Events
         public static Action<int> OnPlayerDamaged;
         public static Action OnPlayerDied;
 
-        // Add more events here as needed...
+        // Inventory & Pickup Events
+        public static Action<Game.Systems.Inventory.ItemData> OnItemPickedUp;
+        public static Action<int> OnPlayerHealed;
+        public static Action<float, float> OnPlayerSpeedBuffed; // multiplier, duration
     }
 }

@@ -54,5 +54,20 @@ namespace Game.Systems.Health
             OnDeath?.Invoke();
             // Typically followed by calling the global event if this is the player
         }
+
+        /// <summary>
+        /// Increases health up to the max health.
+        /// </summary>
+        /// <param name="amount">Heal amount</param>
+        public void Heal(int amount)
+        {
+            if (CurrentHealth <= 0) return; // Cannot heal if already dead
+
+            CurrentHealth += amount;
+            CurrentHealth = Mathf.Min(CurrentHealth, _maxHealth);
+
+            // Reusing OnDamaged to just update the UI or listener about new current health
+            OnDamaged?.Invoke(CurrentHealth);
+        }
     }
 }

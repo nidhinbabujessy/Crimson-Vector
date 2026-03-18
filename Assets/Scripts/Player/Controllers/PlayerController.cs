@@ -27,7 +27,7 @@ namespace Game.Player.Controllers
         [SerializeField] private LayerMask _attackLayer;
 
         // Exposed Properties for States
-        public float MoveSpeed => _moveSpeed;
+        public float MoveSpeed => _moveSpeed * _speedMultiplier;
         public float DashForce => _dashForce;
         public float DashDuration => _dashDuration;
         public float AttackRange => _attackRange;
@@ -43,6 +43,10 @@ namespace Game.Player.Controllers
         public Vector2 MovementInput { get; private set; }
         public bool DashInput { get; private set; }
         public bool AttackInput { get; private set; }
+
+        // Buff State
+        private float _speedMultiplier = 1f;
+        private float _buffTimer = 0f;
 
         // State Instances
         public PlayerIdleState IdleState { get; private set; }
@@ -80,6 +84,8 @@ namespace Game.Player.Controllers
                 Health.OnDamaged.AddListener(HandleDamaged);
                 Health.OnDeath.AddListener(HandleDeath);
             }
+            GameEvents.OnPlayerHealed += HandleHealed;
+            GameEvents.OnPlayerSpeedBuffed += HandleSpeedBuffed;
         }
 
         private void OnDisable()
@@ -89,12 +95,28 @@ namespace Game.Player.Controllers
                 Health.OnDamaged.RemoveListener(HandleDamaged);
                 Health.OnDeath.RemoveListener(HandleDeath);
             }
+            GameEvents.OnPlayerHealed -= HandleHealed;
+            GameEvents.OnPlayerSpeedBuffed -= HandleSpeedBuffed;
         }
 
         private void Update()
         {
             HandleInput();
+            HandleBuffs();
             StateMachine.Update();
+        }
+
+        private void HandleBuffs()
+        {
+            if (_buffTimer > 0f)
+            {
+                _buffTimer -= Time.deltaTime;
+                if (_buffTimer <= 0f)
+                {
+                    _speedMultiplier = 1f;
+                    Debug.Log("[PlayerController] Speed buff ended.");
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -127,6 +149,19 @@ namespace Game.Player.Controllers
         {
             GameEvents.OnPlayerDied?.Invoke();
             Debug.Log("[PlayerController] Player Died!");
+        }
+
+        private void HandleHealed(int amount)
+        {
+            Health?.Heal(amount);
+            Debug.Log($"[PlayerController] Player healed for {amount}. Current HP: {Health.CurrentHealth}");
+        }
+
+        private void HandleSpeedBuffed(float multiplier, float duration)
+        {
+            _speedMultiplier = multiplier;
+            _buffTimer = duration;
+            Debug.Log($"[PlayerController] Player speed buffed by {multiplier}x for {duration} seconds.");
         }
     }
 }
