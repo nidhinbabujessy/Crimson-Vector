@@ -15,6 +15,9 @@ namespace Game.Player.States
         public override void Enter()
         {
             Debug.Log("[STATE] Entered: Idle");
+            // Stop movement immediately on entering Idle
+            Vector3 currentVelocity = _player.Rb.linearVelocity;
+            _player.Rb.linearVelocity = new Vector3(0f, currentVelocity.y, 0f);
         }
 
         public override void Update()
@@ -37,6 +40,13 @@ namespace Game.Player.States
                 _player.StateMachine.ChangeState(_player.MoveState);
                 return;
             }
+        }
+        
+        public override void FixedUpdate()
+        {
+            // Continuously ensure we stay stopped while in Idle
+            Vector3 currentVelocity = _player.Rb.linearVelocity;
+            _player.Rb.linearVelocity = new Vector3(0f, currentVelocity.y, 0f);
         }
     }
 }
