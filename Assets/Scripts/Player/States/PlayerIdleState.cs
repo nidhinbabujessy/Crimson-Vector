@@ -18,6 +18,9 @@ namespace Game.Player.States
             // Stop movement immediately on entering Idle
             Vector3 currentVelocity = _player.Rb.linearVelocity;
             _player.Rb.linearVelocity = new Vector3(0f, currentVelocity.y, 0f);
+
+            // Animation
+            _player.Animator?.SetTrigger(PlayerController.IdleHash);
         }
 
         public override void Update()

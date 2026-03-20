@@ -19,6 +19,7 @@ namespace Game.Player.States
         public override void Enter()
         {
             Debug.Log("[STATE] Entered: Attack");
+            _player.Animator?.SetTrigger(PlayerController.AttackHash);
             _cooldownTimer = _player.AttackCooldown;
             _hasAttacked = false;
 

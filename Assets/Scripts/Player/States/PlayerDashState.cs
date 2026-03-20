@@ -18,6 +18,7 @@ namespace Game.Player.States
         public override void Enter()
         {
             Debug.Log("[STATE] Entered: Dash");
+            _player.Animator?.SetTrigger(PlayerController.DashHash);
             _dashTimer = _player.DashDuration;
 
             // Determine dash direction (fallback to forward if no input)

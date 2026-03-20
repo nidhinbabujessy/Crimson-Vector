@@ -39,7 +39,14 @@ namespace Game.Player.Controllers
 
         public StateMachine StateMachine { get; private set; }
         public Rigidbody Rb { get; private set; }
+        public Animator Animator { get; private set; }
         public Health Health { get; private set; }
+
+        // Animation Parameters
+        public static readonly int IdleHash = Animator.StringToHash("Idle");
+        public static readonly int MoveHash = Animator.StringToHash("Move");
+        public static readonly int DashHash = Animator.StringToHash("Dash");
+        public static readonly int AttackHash = Animator.StringToHash("Attack");
 
         // Input Data
         public Vector2 MovementInput { get; private set; }
@@ -60,6 +67,7 @@ namespace Game.Player.Controllers
         {
             // Initialize Core Components
             Rb = GetComponent<Rigidbody>();
+            Animator = GetComponentInChildren<Animator>();
             Health = GetComponent<Health>();
 
             // Ensure Rigidbody is configured for clean kinematic/physics hybrid if needed

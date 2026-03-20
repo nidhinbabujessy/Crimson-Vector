@@ -15,6 +15,7 @@ namespace Game.Player.States
         public override void Enter()
         {
             Debug.Log("[STATE] Entered: Move");
+            _player.Animator?.SetTrigger(PlayerController.MoveHash);
         }
 
         public override void Update()
