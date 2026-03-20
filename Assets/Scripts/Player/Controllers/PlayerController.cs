@@ -17,6 +17,7 @@ namespace Game.Player.Controllers
     {
         [Header("Movement Settings")]
         [SerializeField] private float _moveSpeed = 8f;
+        [SerializeField] private float _rotationSpeed = 10f;
         [SerializeField] private float _dashForce = 15f;
         [SerializeField] private float _dashDuration = 0.2f;
 
@@ -28,6 +29,7 @@ namespace Game.Player.Controllers
 
         // Exposed Properties for States
         public float MoveSpeed => _moveSpeed * _speedMultiplier;
+        public float RotationSpeed => _rotationSpeed;
         public float DashForce => _dashForce;
         public float DashDuration => _dashDuration;
         public float AttackRange => _attackRange;

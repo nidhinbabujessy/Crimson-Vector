@@ -50,6 +50,17 @@ namespace Game.Player.States
             targetVelocity.y = _player.Rb.linearVelocity.y;
 
             _player.Rb.linearVelocity = targetVelocity;
+
+            // Rotate towards movement direction
+            if (movement.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(movement);
+                _player.transform.rotation = Quaternion.Slerp(
+                    _player.transform.rotation, 
+                    targetRotation, 
+                    Time.fixedDeltaTime * _player.RotationSpeed
+                );
+            }
         }
     }
 }

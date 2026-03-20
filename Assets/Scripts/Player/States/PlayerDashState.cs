@@ -30,6 +30,9 @@ namespace Game.Player.States
                 _dashDirection = _player.transform.forward;
             }
 
+            // Face the dash direction instantly
+            _player.transform.rotation = Quaternion.LookRotation(_dashDirection);
+
             // Apply immediate burst velocity
             _player.Rb.linearVelocity = new Vector3(
                 _dashDirection.x * _player.DashForce,
