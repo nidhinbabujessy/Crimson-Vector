@@ -9,7 +9,7 @@ namespace Game.Core.Events
     public static class GameEvents
     {
         // Player events
-        public static Action<int> OnPlayerDamaged;
+        public static Action<int, int> OnPlayerDamaged; // current, max
         public static Action OnPlayerDied;
 
         // Inventory & Pickup Events

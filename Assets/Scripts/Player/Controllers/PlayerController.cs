@@ -47,6 +47,7 @@ namespace Game.Player.Controllers
         public static readonly int MoveHash = Animator.StringToHash("Move");
         public static readonly int DashHash = Animator.StringToHash("Dash");
         public static readonly int AttackHash = Animator.StringToHash("Attack");
+        public static readonly int DieHash = Animator.StringToHash("Die");
 
         // Input Data
         public Vector2 MovementInput { get; private set; }
@@ -62,6 +63,7 @@ namespace Game.Player.Controllers
         public PlayerMoveState MoveState { get; private set; }
         public PlayerDashState DashState { get; private set; }
         public PlayerAttackState AttackState { get; private set; }
+        public PlayerDeathState DeathState { get; private set; }
 
         private void Awake()
         {
@@ -80,11 +82,15 @@ namespace Game.Player.Controllers
             MoveState = new PlayerMoveState(this);
             DashState = new PlayerDashState(this);
             AttackState = new PlayerAttackState(this);
+            DeathState = new PlayerDeathState(this);
         }
 
         private void Start()
         {
             StateMachine.Initialize(IdleState);
+            // Fire initial UI update
+            if (Health != null)
+                HandleDamaged(Health.CurrentHealth);
         }
 
         private void OnEnable()
@@ -151,12 +157,13 @@ namespace Game.Player.Controllers
         // --- Event Handlers ---
         private void HandleDamaged(int currentHealth)
         {
-            GameEvents.OnPlayerDamaged?.Invoke(currentHealth);
-            Debug.Log($"[PlayerController] Player took damage. Health: {currentHealth}");
+            GameEvents.OnPlayerDamaged?.Invoke(currentHealth, Health.MaxHealth);
+            Debug.Log($"[PlayerController] Player took damage. Health: {currentHealth}/{Health.MaxHealth}");
         }
 
         private void HandleDeath()
         {
+            StateMachine.ChangeState(DeathState);
             GameEvents.OnPlayerDied?.Invoke();
             Debug.Log("[PlayerController] Player Died!");
         }
