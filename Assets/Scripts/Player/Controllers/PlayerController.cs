@@ -22,20 +22,22 @@ namespace Game.Player.Controllers
         [SerializeField] private float _dashDuration = 0.2f;
 
         [Header("Attack Settings")]
-        [SerializeField] private float _attackRange = 5f;
         [SerializeField] private float _attackCooldown = 0.5f;
         [SerializeField] private int _attackDamage = 20;
         [SerializeField] private LayerMask _attackLayer;
+        [SerializeField] private GameObject _projectilePrefab;
+        [SerializeField] private Transform _shootPoint;
 
         // Exposed Properties for States
         public float MoveSpeed => _moveSpeed * _speedMultiplier;
         public float RotationSpeed => _rotationSpeed;
         public float DashForce => _dashForce;
         public float DashDuration => _dashDuration;
-        public float AttackRange => _attackRange;
         public float AttackCooldown => _attackCooldown;
         public int AttackDamage => _attackDamage;
         public LayerMask AttackLayer => _attackLayer;
+        public GameObject ProjectilePrefab => _projectilePrefab;
+        public Transform ShootPoint => _shootPoint;
 
         public StateMachine StateMachine { get; private set; }
         public Rigidbody Rb { get; private set; }
@@ -180,5 +182,6 @@ namespace Game.Player.Controllers
             _buffTimer = duration;
             Debug.Log($"[PlayerController] Player speed buffed by {multiplier}x for {duration} seconds.");
         }
+
     }
 }

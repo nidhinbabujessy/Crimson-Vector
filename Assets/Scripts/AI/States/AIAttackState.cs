@@ -67,21 +67,31 @@ namespace Game.AI.States
             if (_ai.Target == null) return;
             
             // Trigger animation
-            if (EnemyMeleeAnimation.Instance != null && !_isRanged)
-            {
-                EnemyMeleeAnimation.Instance.PlayAttack();
-            }
+            _ai.GetComponent<Common.EnemyAnimation>()?.PlayAttack();
 
             if (_isRanged)
             {
-                // Ranged: Simple Raycast Example (Can be replaced with Projectile later)
-                Debug.DrawRay(_ai.transform.position + Vector3.up, _ai.transform.forward * _ai.AttackRange, Color.red, 0.5f);
-                if (Physics.Raycast(_ai.transform.position + Vector3.up, _ai.transform.forward, out RaycastHit hit, _ai.AttackRange))
+                // Ranged: Instantiate projectile
+                if (_ai is EnemyRangedController rangedAI && rangedAI.ProjectilePrefab != null)
                 {
-                    if (hit.transform == _ai.Target && hit.transform.TryGetComponent(out Health health))
+                    GameObject projObj = Object.Instantiate(rangedAI.ProjectilePrefab, rangedAI.FirePoint.position, rangedAI.FirePoint.rotation);
+                    if (projObj.TryGetComponent(out Common.Projectile projectile))
                     {
-                        health.TakeDamage(_damage);
-                        Debug.Log($"[{_ai.gameObject.name}] Shot {_ai.Target.name} for {_damage} damage.");
+                        projectile.Initialize(_damage, _ai.TargetLayer, _ai.gameObject);
+                        Debug.Log($"[{_ai.gameObject.name}] Fired projectile at {_ai.Target.name}.");
+                    }
+                }
+                else
+                {
+                    // Fallback to Raycast if no prefab
+                    Debug.DrawRay(_ai.transform.position + Vector3.up, _ai.transform.forward * _ai.AttackRange, Color.red, 0.5f);
+                    if (Physics.Raycast(_ai.transform.position + Vector3.up, _ai.transform.forward, out RaycastHit hit, _ai.AttackRange))
+                    {
+                        if (hit.transform == _ai.Target && hit.transform.TryGetComponent(out Health health))
+                        {
+                            health.TakeDamage(_damage);
+                            Debug.Log($"[{_ai.gameObject.name}] Shot {_ai.Target.name} (Raycast) for {_damage} damage.");
+                        }
                     }
                 }
             }

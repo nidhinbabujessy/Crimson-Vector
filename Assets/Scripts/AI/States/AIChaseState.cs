@@ -30,11 +30,8 @@ namespace Game.AI.States
         {
             _pathTimer = 0f;
             
-            // Trigger Run animation if this is a Melee enemy
-            if (_ai is EnemyMeleeController && EnemyMeleeAnimation.Instance != null)
-            {
-                EnemyMeleeAnimation.Instance.PlayRun();
-            }
+            // Trigger Run animation
+            _ai.GetComponent<Common.EnemyAnimation>()?.PlayRun();
         }
 
         public override void Update()

@@ -30,11 +30,8 @@ namespace Game.AI.States
             _ai.StopMovement();
             _timer = _idleDuration;
 
-            // Trigger Idle animation if this is a Melee enemy
-            if (_ai is EnemyMeleeController && EnemyMeleeAnimation.Instance != null)
-            {
-                EnemyMeleeAnimation.Instance.PlayIdle();
-            }
+            // Trigger Idle animation
+            _ai.GetComponent<Common.EnemyAnimation>()?.PlayIdle();
         }
 
         public override void Update()

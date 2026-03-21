@@ -13,9 +13,15 @@ namespace Game.AI.Controllers
         [SerializeField] private float _attackCooldown = 2f;
         [SerializeField] private int _attackDamage = 10;
         
+        [SerializeField] private GameObject _projectilePrefab;
+        [SerializeField] private Transform _firePoint;
+        
         [Header("Patrol Settings")]
         [SerializeField] private Transform[] _patrolWaypoints;
         [SerializeField] private float _idleDuration = 3f;
+
+        public GameObject ProjectilePrefab => _projectilePrefab;
+        public Transform FirePoint => _firePoint != null ? _firePoint : transform;
 
         private Vector3 _homePosition;
 

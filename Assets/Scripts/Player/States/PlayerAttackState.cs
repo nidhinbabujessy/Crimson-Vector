@@ -26,6 +26,7 @@ namespace Game.Player.States
             // Stop movement during attack
             _player.Rb.linearVelocity = new Vector3(0f, _player.Rb.linearVelocity.y, 0f);
             
+            // Spawn projectile immediately for better responsiveness
             PerformAttack();
         }
 
@@ -34,22 +35,24 @@ namespace Game.Player.States
             if (_hasAttacked) return;
             _hasAttacked = true;
 
-            Vector3 origin = _player.transform.position + Vector3.up * 1f; // Slightly elevated
-            Vector3 direction = _player.transform.forward;
-
-            // Debug visualizer
-            Debug.DrawRay(origin, direction * _player.AttackRange, Color.red, 1f);
-
-            if (Physics.Raycast(origin, direction, out RaycastHit hit, _player.AttackRange, _player.AttackLayer))
+            if (_player.ProjectilePrefab == null || _player.ShootPoint == null)
             {
-                Debug.Log($"[Attack] Hit: {hit.collider.name}");
-
-                // Decoupled damage interaction
-                if (hit.collider.TryGetComponent(out Health targetHealth))
-                {
-                    targetHealth.TakeDamage(_player.AttackDamage);
-                }
+                Debug.LogWarning("[PlayerAttackState] Projectile Prefab or Shoot Point is missing!");
+                return;
             }
+
+            GameObject projectileObj = Object.Instantiate(_player.ProjectilePrefab, _player.ShootPoint.position, _player.ShootPoint.rotation);
+            if (projectileObj.TryGetComponent(out Game.AI.Common.Projectile projectile))
+            {
+                projectile.Initialize(_player.AttackDamage, _player.AttackLayer, _player.gameObject);
+                Debug.Log($"[PlayerAttackState] Projectile initialized with damage: {_player.AttackDamage}");
+            }
+            else
+            {
+                Debug.LogError("[PlayerAttackState] Projectile Prefab is missing the Projectile script!");
+            }
+            
+            Debug.Log($"[Attack] Projectile spawned at {_player.ShootPoint.position}");
         }
 
         public override void Update()
