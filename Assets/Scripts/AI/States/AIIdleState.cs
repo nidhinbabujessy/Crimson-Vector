@@ -9,14 +9,18 @@ namespace Game.AI.States
     /// </summary>
     public class AIIdleState : AIBaseState
     {
-        private readonly Game.Core.StateMachine.IState _patrolState;
-        private readonly Game.Core.StateMachine.IState _chaseState;
+        private Game.Core.StateMachine.IState _patrolState;
+        private Game.Core.StateMachine.IState _chaseState;
         private readonly float _idleDuration;
         private float _timer;
 
-        public AIIdleState(BaseAIController ai, float idleDuration, Game.Core.StateMachine.IState patrolState, Game.Core.StateMachine.IState chaseState) : base(ai)
+        public AIIdleState(BaseAIController ai, float idleDuration) : base(ai)
         {
             _idleDuration = idleDuration;
+        }
+
+        public void SetTransitions(Game.Core.StateMachine.IState patrolState, Game.Core.StateMachine.IState chaseState)
+        {
             _patrolState = patrolState;
             _chaseState = chaseState;
         }
@@ -25,6 +29,12 @@ namespace Game.AI.States
         {
             _ai.StopMovement();
             _timer = _idleDuration;
+
+            // Trigger Idle animation if this is a Melee enemy
+            if (_ai is EnemyMeleeController && EnemyMeleeAnimation.Instance != null)
+            {
+                EnemyMeleeAnimation.Instance.PlayIdle();
+            }
         }
 
         public override void Update()

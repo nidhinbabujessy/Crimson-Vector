@@ -42,18 +42,23 @@ namespace Game.AI.Controllers
         {
             base.Start();
 
-            // Set up Phase 2
-            Phase2Chase = new AIChaseState(this, null, null);
-            Phase2Attack = new AIAttackState(this, Phase2Chase, _p2AttackCooldown, _p2AttackDamage, isRanged: true);
-            // Re-instantiate to fix references (Boss doesn't return home)
-            Phase2Chase = new AIChaseState(this, Phase2Attack, null); 
+            // 1. Initialize states without transitions
+            Phase2Chase = new AIChaseState(this);
+            Phase2Attack = new AIAttackState(this, _p2AttackCooldown, _p2AttackDamage, isRanged: true);
 
-            // Set up Phase 1
-            Phase1Chase = new AIChaseState(this, null, null);
-            Phase1Attack = new AIAttackState(this, Phase1Chase, _p1AttackCooldown, _p1AttackDamage, isRanged: false);
-            Phase1Chase = new AIChaseState(this, Phase1Attack, null);
+            Phase1Chase = new AIChaseState(this);
+            Phase1Attack = new AIAttackState(this, _p1AttackCooldown, _p1AttackDamage, isRanged: false);
             
-            IdleState = new AIIdleState(this, 1f, null, Phase1Chase);
+            IdleState = new AIIdleState(this, 1f);
+
+            // 2. Set Transitions cleanly
+            Phase2Chase.SetTransitions(Phase2Attack, null);
+            Phase2Attack.SetTransitions(Phase2Chase);
+
+            Phase1Chase.SetTransitions(Phase1Attack, null);
+            Phase1Attack.SetTransitions(Phase1Chase);
+
+            IdleState.SetTransitions(null, Phase1Chase);
 
             // Subscribe to Health events for Phase transitioning
             Health.OnDamaged.AddListener(HandleDamaged);

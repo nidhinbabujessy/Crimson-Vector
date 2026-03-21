@@ -11,17 +11,21 @@ namespace Game.AI.States
     public class AIPatrolState : AIBaseState
     {
         private readonly Transform[] _waypoints;
-        private readonly Game.Core.StateMachine.IState _idleState;
-        private readonly Game.Core.StateMachine.IState _chaseState;
+        private Game.Core.StateMachine.IState _idleState;
+        private Game.Core.StateMachine.IState _chaseState;
         
         private int _currentWaypointIndex;
 
-        public AIPatrolState(BaseAIController ai, Transform[] waypoints, Game.Core.StateMachine.IState idleState, Game.Core.StateMachine.IState chaseState) : base(ai)
+        public AIPatrolState(BaseAIController ai, Transform[] waypoints) : base(ai)
         {
             _waypoints = waypoints;
+            _currentWaypointIndex = 0;
+        }
+
+        public void SetTransitions(Game.Core.StateMachine.IState idleState, Game.Core.StateMachine.IState chaseState)
+        {
             _idleState = idleState;
             _chaseState = chaseState;
-            _currentWaypointIndex = 0;
         }
 
         public override void Enter()
@@ -33,6 +37,12 @@ namespace Game.AI.States
             }
 
             _ai.MoveTo(_waypoints[_currentWaypointIndex].position);
+
+            // Trigger Run animation if this is a Melee enemy
+            if (_ai is EnemyMeleeController && EnemyMeleeAnimation.Instance != null)
+            {
+                EnemyMeleeAnimation.Instance.PlayRun();
+            }
         }
 
         public override void Update()

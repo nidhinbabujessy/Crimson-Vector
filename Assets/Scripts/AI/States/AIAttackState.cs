@@ -9,19 +9,23 @@ namespace Game.AI.States
     /// </summary>
     public class AIAttackState : AIBaseState
     {
-        private readonly Game.Core.StateMachine.IState _chaseState;
+        private Game.Core.StateMachine.IState _chaseState;
         private readonly float _attackCooldown;
         private readonly int _damage;
         private readonly bool _isRanged;
         
         private float _cooldownTimer;
 
-        public AIAttackState(BaseAIController ai, Game.Core.StateMachine.IState chaseState, float attackCooldown, int damage, bool isRanged = false) : base(ai)
+        public AIAttackState(BaseAIController ai, float attackCooldown, int damage, bool isRanged = false) : base(ai)
         {
-            _chaseState = chaseState;
             _attackCooldown = attackCooldown;
             _damage = damage;
             _isRanged = isRanged;
+        }
+
+        public void SetTransitions(Game.Core.StateMachine.IState chaseState)
+        {
+            _chaseState = chaseState;
         }
 
         public override void Enter()
@@ -61,6 +65,12 @@ namespace Game.AI.States
         private void PerformAttack()
         {
             if (_ai.Target == null) return;
+            
+            // Trigger animation
+            if (EnemyMeleeAnimation.Instance != null && !_isRanged)
+            {
+                EnemyMeleeAnimation.Instance.PlayAttack();
+            }
 
             if (_isRanged)
             {

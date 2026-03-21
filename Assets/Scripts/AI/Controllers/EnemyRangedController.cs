@@ -32,25 +32,19 @@ namespace Game.AI.Controllers
 
             _homePosition = transform.position;
 
-            // 1. Initial dummy creation
-            IdleState = new AIIdleState(this, _idleDuration, null, null);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, null, null);
-            ChaseState = new AIChaseState(this, null, null);
-            AttackState = new AIAttackState(this, null, _attackCooldown, _attackDamage, isRanged: true);
-            ReturnState = new AIReturnState(this, _homePosition, null, null);
+            // 1. Initialize states without transitions to prevent circular dependency
+            IdleState = new AIIdleState(this, _idleDuration);
+            PatrolState = new AIPatrolState(this, _patrolWaypoints);
+            ChaseState = new AIChaseState(this);
+            AttackState = new AIAttackState(this, _attackCooldown, _attackDamage, isRanged: true);
+            ReturnState = new AIReturnState(this, _homePosition);
 
-            // 2. Wiring them up recursively
-            ReturnState = new AIReturnState(this, _homePosition, IdleState, ChaseState);
-            AttackState = new AIAttackState(this, ChaseState, _attackCooldown, _attackDamage, isRanged: true);
-            ChaseState = new AIChaseState(this, AttackState, ReturnState);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, IdleState, ChaseState);
-            IdleState = new AIIdleState(this, _idleDuration, PatrolState, ChaseState);
-
-            // 3. Final link using established references
-            ReturnState = new AIReturnState(this, _homePosition, IdleState, ChaseState);
-            AttackState = new AIAttackState(this, ChaseState, _attackCooldown, _attackDamage, isRanged: true);
-            ChaseState = new AIChaseState(this, AttackState, ReturnState);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, IdleState, ChaseState);
+            // 2. Set Transitions cleanly
+            ReturnState.SetTransitions(IdleState, ChaseState);
+            AttackState.SetTransitions(ChaseState);
+            ChaseState.SetTransitions(AttackState, ReturnState);
+            PatrolState.SetTransitions(IdleState, ChaseState);
+            IdleState.SetTransitions(PatrolState, ChaseState);
 
             // Start the State Machine
             StateMachine.Initialize(IdleState);

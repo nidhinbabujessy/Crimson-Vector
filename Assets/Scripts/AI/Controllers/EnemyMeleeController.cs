@@ -32,30 +32,19 @@ namespace Game.AI.Controllers
 
             _homePosition = transform.position;
 
-            // 1. Initialize states without transitions first to prevent circular dependency
-            IdleState = new AIIdleState(this, _idleDuration, null, null);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, null, null);
-            ChaseState = new AIChaseState(this, null, null);
-            AttackState = new AIAttackState(this, null, _attackCooldown, _attackDamage, isRanged: false);
-            ReturnState = new AIReturnState(this, _homePosition, null, null);
+            // 1. Initialize states without transitions to prevent circular dependency
+            IdleState = new AIIdleState(this, _idleDuration);
+            PatrolState = new AIPatrolState(this, _patrolWaypoints);
+            ChaseState = new AIChaseState(this);
+            AttackState = new AIAttackState(this, _attackCooldown, _attackDamage, isRanged: false);
+            ReturnState = new AIReturnState(this, _homePosition);
 
-            // 2. We use a cleaner approach by passing a Func<IState> or setting properties.
-            // Since our constructors require them, let's just re-instantiate them cleanly 
-            // once we have the references, or better yet, inject them. 
-            // To keep the IState strictly following SOLID and immutable-ish without public setters,
-            // we will reconstruct them bottom-up.
-
-            ReturnState = new AIReturnState(this, _homePosition, IdleState, ChaseState);
-            AttackState = new AIAttackState(this, ChaseState, _attackCooldown, _attackDamage, isRanged: false);
-            ChaseState = new AIChaseState(this, AttackState, ReturnState);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, IdleState, ChaseState);
-            IdleState = new AIIdleState(this, _idleDuration, PatrolState, ChaseState);
-            
-            // Fix the cross-references for the final compiled graph
-            ReturnState = new AIReturnState(this, _homePosition, IdleState, ChaseState);
-            AttackState = new AIAttackState(this, ChaseState, _attackCooldown, _attackDamage, isRanged: false);
-            ChaseState = new AIChaseState(this, AttackState, ReturnState);
-            PatrolState = new AIPatrolState(this, _patrolWaypoints, IdleState, ChaseState);
+            // 2. Set Transitions cleanly without creating ghost copies
+            ReturnState.SetTransitions(IdleState, ChaseState);
+            AttackState.SetTransitions(ChaseState);
+            ChaseState.SetTransitions(AttackState, ReturnState);
+            PatrolState.SetTransitions(IdleState, ChaseState);
+            IdleState.SetTransitions(PatrolState, ChaseState);
 
             // Start the State Machine
             StateMachine.Initialize(IdleState);

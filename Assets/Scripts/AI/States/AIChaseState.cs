@@ -10,13 +10,17 @@ namespace Game.AI.States
     /// </summary>
     public class AIChaseState : AIBaseState
     {
-        private readonly Game.Core.StateMachine.IState _attackState;
-        private readonly Game.Core.StateMachine.IState _returnState;
+        private Game.Core.StateMachine.IState _attackState;
+        private Game.Core.StateMachine.IState _returnState;
         
         private const float PathUpdateInterval = 0.2f;
         private float _pathTimer;
 
-        public AIChaseState(BaseAIController ai, Game.Core.StateMachine.IState attackState, Game.Core.StateMachine.IState returnState) : base(ai)
+        public AIChaseState(BaseAIController ai) : base(ai)
+        {
+        }
+
+        public void SetTransitions(Game.Core.StateMachine.IState attackState, Game.Core.StateMachine.IState returnState)
         {
             _attackState = attackState;
             _returnState = returnState;
@@ -25,6 +29,12 @@ namespace Game.AI.States
         public override void Enter()
         {
             _pathTimer = 0f;
+            
+            // Trigger Run animation if this is a Melee enemy
+            if (_ai is EnemyMeleeController && EnemyMeleeAnimation.Instance != null)
+            {
+                EnemyMeleeAnimation.Instance.PlayRun();
+            }
         }
 
         public override void Update()
