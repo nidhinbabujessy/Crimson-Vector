@@ -183,5 +183,24 @@ namespace Game.Player.Controllers
             Debug.Log($"[PlayerController] Player speed buffed by {multiplier}x for {duration} seconds.");
         }
 
+        /// <summary>
+        /// Calculates the rotation towards the mouse cursor on a horizontal plane.
+        /// </summary>
+        public Quaternion GetMouseLookRotation()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, transform.position);
+            if (groundPlane.Raycast(ray, out float distance))
+            {
+                Vector3 targetPoint = ray.GetPoint(distance);
+                Vector3 direction = (targetPoint - transform.position);
+                direction.y = 0f; // Keep rotation horizontal
+                if (direction.sqrMagnitude > 0.01f)
+                {
+                    return Quaternion.LookRotation(direction);
+                }
+            }
+            return transform.rotation;
+        }
     }
 }

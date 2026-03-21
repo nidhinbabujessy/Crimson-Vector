@@ -46,20 +46,14 @@ namespace Game.AI.Common
 
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"[Projectile] OnTriggerEnter with: {other.gameObject.name} (Layer: {LayerMask.LayerToName(other.gameObject.layer)})");
-
             // Ignore the person who shot the bullet
             if (_owner != null && (other.gameObject == _owner || other.transform.IsChildOf(_owner.transform))) 
             {
-                Debug.Log($"[Projectile] Ignoring hit with owner: {other.gameObject.name}");
                 return;
             }
 
             // 1. Check if the hit object is a damageable target
-            bool isTarget = ((1 << other.gameObject.layer) & _targetLayer) != 0;
-            Debug.Log($"[Projectile] Layer Match: {isTarget} (Object: {other.gameObject.layer}, Mask: {_targetLayer.value})");
-
-            if (isTarget)
+            if (((1 << other.gameObject.layer) & _targetLayer) != 0)
             {
                 Health health = other.GetComponentInParent<Health>();
                 if (health != null)
@@ -67,17 +61,10 @@ namespace Game.AI.Common
                     health.TakeDamage(_damage);
                     Debug.Log("enemy chaththu"); // Requested message
                     Debug.Log($"[Projectile Hit] {other.gameObject.name} hit! Damage: {_damage}, Target: {health.gameObject.name}, Remaining Health: {health.CurrentHealth}/{health.MaxHealth}");
-                    
-                    if (_owner.CompareTag("Player"))
-                    {
-                        Debug.Log($"[Projectile] Player hit {health.gameObject.name}. Disabling enemy.");
-                       // health.gameObject.SetActive(false);
-                    }
                 }
             }
 
-            // 2. ALWAYS destroy the bullet on any impact (walls, enemies, etc.)
-            Debug.Log($"[Projectile] Destroying bullet on impact with {other.gameObject.name}");
+            // 2. ALWAYS destroy the bullet on impact
             Destroy(gameObject);
         }
     }

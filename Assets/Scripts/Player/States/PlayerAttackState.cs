@@ -72,5 +72,16 @@ namespace Game.Player.States
                 }
             }
         }
+
+        public override void FixedUpdate()
+        {
+            // Allow rotating towards mouse while attacking
+            Quaternion targetRotation = _player.GetMouseLookRotation();
+            _player.transform.rotation = Quaternion.Slerp(
+                _player.transform.rotation,
+                targetRotation,
+                Time.fixedDeltaTime * _player.RotationSpeed
+            );
+        }
     }
 }

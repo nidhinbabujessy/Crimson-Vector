@@ -50,6 +50,14 @@ namespace Game.Player.States
             // Continuously ensure we stay stopped while in Idle
             Vector3 currentVelocity = _player.Rb.linearVelocity;
             _player.Rb.linearVelocity = new Vector3(0f, currentVelocity.y, 0f);
+
+            // Rotate towards mouse when idle
+            Quaternion targetRotation = _player.GetMouseLookRotation();
+            _player.transform.rotation = Quaternion.Slerp(
+                _player.transform.rotation,
+                targetRotation,
+                Time.fixedDeltaTime * _player.RotationSpeed
+            );
         }
     }
 }
