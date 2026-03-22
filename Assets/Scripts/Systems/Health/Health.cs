@@ -15,6 +15,7 @@ namespace Game.Systems.Health
         
         public int CurrentHealth { get; private set; }
         public int MaxHealth => _maxHealth;
+        public bool IsInvulnerable { get; set; } = false;
 
         [Header("Optional Local Events")]
         public UnityEvent<int> OnDamaged;
@@ -31,7 +32,7 @@ namespace Game.Systems.Health
         /// <param name="amount">Damage amount</param>
         public void TakeDamage(int amount)
         {
-            if (CurrentHealth <= 0) return;
+            if (CurrentHealth <= 0 || IsInvulnerable) return;
 
             CurrentHealth -= amount;
             CurrentHealth = Mathf.Max(CurrentHealth, 0);
