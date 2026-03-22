@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Game.Systems.Health;
 
 namespace Game.AI.Common
@@ -11,7 +11,10 @@ namespace Game.AI.Common
     {
         [SerializeField] private float _speed = 10f;
         [SerializeField] private float _lifeTime = 5f;
-        
+
+        [SerializeField] private GameObject _hitEffectPrefab;
+        [SerializeField] private float _hitEffectLifetime = 3f;
+
         private int _damage;
         private LayerMask _targetLayer;
         private GameObject _owner;
@@ -47,9 +50,19 @@ namespace Game.AI.Common
         private void OnTriggerEnter(Collider other)
         {
             // Ignore the person who shot the bullet
-            if (_owner != null && (other.gameObject == _owner || other.transform.IsChildOf(_owner.transform))) 
+            if (_owner != null && (other.gameObject == _owner || other.transform.IsChildOf(_owner.transform)))
             {
                 return;
+            }
+
+            // 🔥 Spawn particle effect at hit point
+            if (_hitEffectPrefab != null)
+            {
+                Vector3 hitPosition = other.ClosestPoint(transform.position);
+                Quaternion hitRotation = Quaternion.LookRotation(-transform.forward);
+
+                GameObject effect = Instantiate(_hitEffectPrefab, hitPosition, hitRotation);
+                Destroy(effect, _hitEffectLifetime);
             }
 
             // 1. Check if the hit object is a damageable target
@@ -59,7 +72,7 @@ namespace Game.AI.Common
                 if (health != null)
                 {
                     health.TakeDamage(_damage);
-                    Debug.Log("enemy chaththu"); // Requested message
+                    Debug.Log("enemy chaththu");
                     Debug.Log($"[Projectile Hit] {other.gameObject.name} hit! Damage: {_damage}, Target: {health.gameObject.name}, Remaining Health: {health.CurrentHealth}/{health.MaxHealth}");
                 }
             }
@@ -67,5 +80,7 @@ namespace Game.AI.Common
             // 2. ALWAYS destroy the bullet on impact
             Destroy(gameObject);
         }
+
+
     }
 }

@@ -25,9 +25,6 @@ namespace Game.AI.States
             _ai.enabled = false;
             
             Debug.Log($"[{_ai.gameObject.name}] Mini Boss is DEAD. Disabling all actions.");
-            
-            // Note: HandleDeath in BaseAIController already handles object destruction.
-            // But we ensure the logic is strictly disabled here in the state machine too.
         }
 
         public override void Update()
