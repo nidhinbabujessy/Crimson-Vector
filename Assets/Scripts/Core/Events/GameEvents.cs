@@ -11,6 +11,8 @@ namespace Game.Core.Events
         // Player events
         public static Action<int, int> OnPlayerDamaged; // current, max
         public static Action OnPlayerDied;
+        public static Action<int, int> OnAmmoChanged; // current, max
+        public static Action<string> OnObjectiveChanged; // description
 
         // Inventory & Pickup Events
         public static Action<Game.Systems.Inventory.ItemData> OnItemPickedUp;

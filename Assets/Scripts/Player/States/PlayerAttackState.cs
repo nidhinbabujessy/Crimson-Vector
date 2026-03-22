@@ -23,11 +23,17 @@ namespace Game.Player.States
             _cooldownTimer = _player.AttackCooldown;
             _hasAttacked = false;
 
-            // Stop movement during attack
-            _player.Rb.linearVelocity = new Vector3(0f, _player.Rb.linearVelocity.y, 0f);
-            
-            // Spawn projectile immediately for better responsiveness
-            PerformAttack();
+            if (_player.CurrentAmmo > 0)
+            {
+                // Stop movement during attack
+                _player.Rb.linearVelocity = new Vector3(0f, _player.Rb.linearVelocity.y, 0f);
+                PerformAttack();
+            }
+            else
+            {
+                Debug.Log("[PlayerAttackState] Out of ammo!");
+                _hasAttacked = true; // Prevent multiple logs/logic
+            }
         }
 
         private void PerformAttack()
@@ -41,6 +47,7 @@ namespace Game.Player.States
                 return;
             }
 
+            _player.ConsumeAmmo();
             GameObject projectileObj = Object.Instantiate(_player.ProjectilePrefab, _player.ShootPoint.position, _player.ShootPoint.rotation);
             if (projectileObj.TryGetComponent(out Game.AI.Common.Projectile projectile))
             {

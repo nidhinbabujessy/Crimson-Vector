@@ -24,6 +24,7 @@ namespace Game.Player.Controllers
         [Header("Attack Settings")]
         [SerializeField] private float _attackCooldown = 0.5f;
         [SerializeField] private int _attackDamage = 20;
+        [SerializeField] private int _maxAmmo = 30;
         [SerializeField] private LayerMask _attackLayer;
         [SerializeField] private GameObject _projectilePrefab;
         [SerializeField] private Transform _shootPoint;
@@ -35,6 +36,7 @@ namespace Game.Player.Controllers
         public float DashDuration => _dashDuration;
         public float AttackCooldown => _attackCooldown;
         public int AttackDamage => _attackDamage;
+        public int MaxAmmo => _maxAmmo;
         public LayerMask AttackLayer => _attackLayer;
         public GameObject ProjectilePrefab => _projectilePrefab;
         public Transform ShootPoint => _shootPoint;
@@ -59,6 +61,9 @@ namespace Game.Player.Controllers
         // Buff State
         private float _speedMultiplier = 1f;
         private float _buffTimer = 0f;
+        private int _currentAmmo;
+
+        public int CurrentAmmo => _currentAmmo;
 
         // State Instances
         public PlayerIdleState IdleState { get; private set; }
@@ -73,6 +78,7 @@ namespace Game.Player.Controllers
             Rb = GetComponent<Rigidbody>();
             Animator = GetComponentInChildren<Animator>();
             Health = GetComponent<Health>();
+            _currentAmmo = _maxAmmo;
 
             // Ensure Rigidbody is configured for clean kinematic/physics hybrid if needed
             Rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -93,6 +99,8 @@ namespace Game.Player.Controllers
             // Fire initial UI update
             if (Health != null)
                 HandleDamaged(Health.CurrentHealth);
+            
+            GameEvents.OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
         }
 
         private void OnEnable()
@@ -181,6 +189,12 @@ namespace Game.Player.Controllers
             _speedMultiplier = multiplier;
             _buffTimer = duration;
             Debug.Log($"[PlayerController] Player speed buffed by {multiplier}x for {duration} seconds.");
+        }
+
+        public void ConsumeAmmo(int amount = 1)
+        {
+            _currentAmmo = Mathf.Max(0, _currentAmmo - amount);
+            GameEvents.OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
         }
 
         /// <summary>

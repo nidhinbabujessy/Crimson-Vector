@@ -11,6 +11,7 @@ namespace Game.UI
     {
         [Header("References")]
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private string _menuSceneName = "MenuScene";
 
         private void Awake()
         {
@@ -53,8 +54,7 @@ namespace Game.UI
         public void QuitToMenu()
         {
             Time.timeScale = 1f;
-            // SceneManager.LoadScene("MenuScene");
-            Application.Quit();
+            SceneManager.LoadScene(_menuSceneName);
         }
     }
 }
