@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Game.Systems.Health;
 
 namespace Game.AI.Common
