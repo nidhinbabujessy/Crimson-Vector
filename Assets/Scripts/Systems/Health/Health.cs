@@ -70,5 +70,18 @@ namespace Game.Systems.Health
             // Reusing OnDamaged to just update the UI or listener about new current health
             OnDamaged?.Invoke(CurrentHealth);
         }
+        /// <summary>
+        /// Explicitly sets the current health (used for loading games).
+        /// </summary>
+        public void SetHealth(int amount)
+        {
+            CurrentHealth = Mathf.Clamp(amount, 0, _maxHealth);
+            OnDamaged?.Invoke(CurrentHealth);
+            
+            if (CurrentHealth <= 0)
+            {
+                Die();
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ namespace Game.UI
 {
     using UnityEngine;
     using UnityEngine.SceneManagement;
+    using Game.Systems.SaveLoad;
 
     /// <summary>
     /// Handles Pausing the game, toggling the UI, and time scaling.
@@ -63,6 +64,23 @@ namespace Game.UI
         {
             Time.timeScale = 1f;
             SceneManager.LoadScene(_menuSceneName);
+        }
+
+        public void SaveGame()
+        {
+            if (SaveLoadManager.Instance != null)
+            {
+                SaveLoadManager.Instance.SaveGame();
+            }
+        }
+
+        public void LoadGame()
+        {
+            if (SaveLoadManager.Instance != null)
+            {
+                SaveLoadManager.Instance.LoadGame();
+                Resume(); // Resume game after loading to see results
+            }
         }
     }
 }

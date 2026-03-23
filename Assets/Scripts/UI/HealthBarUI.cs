@@ -21,8 +21,6 @@ namespace Game.UI
         private void OnEnable()
         {
             GameEvents.OnPlayerDamaged += UpdateHealth;
-            // Also listen to healing if that event exists
-            GameEvents.OnPlayerHealed += (amount) => { /* Logic is handled by Health component firing Damaged event with new HP */ };
         }
 
         private void OnDisable()

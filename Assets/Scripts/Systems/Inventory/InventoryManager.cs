@@ -57,5 +57,50 @@ namespace Game.Systems.Inventory
                 UseItem(_items[0]);
             }
         }
+        // --- Save/Load Integration ---
+
+        /// <summary>
+        /// Returns a list of unique identifiers (Internal Name) for all current items in inventory.
+        /// Falls back to Asset name if ItemName is missing.
+        /// </summary>
+        public List<string> GetItemNames()
+        {
+            List<string> names = new List<string>();
+            foreach (var item in _items)
+            {
+                if (item == null) continue;
+                
+                // Priority: ItemName field > Asset Name
+                string identifier = !string.IsNullOrEmpty(item.ItemName) ? item.ItemName : item.name;
+                names.Add(identifier);
+            }
+            return names;
+        }
+
+        /// <summary>
+        /// Clears and reloads the inventory from a list of item names.
+        /// Requires the ItemData assets to be in a Resources folder or found via search.
+        /// For simplicity in this interview project, we'll use Resources.Load or a simple lookup.
+        /// </summary>
+        public void LoadInventory(List<string> itemNames)
+        {
+            _items.Clear();
+            foreach (string name in itemNames)
+            {
+                // In a real project, you'd use a more robust ID system or Addressables.
+                // Here we assume items are named consistently.
+                ItemData data = Resources.Load<ItemData>($"Items/{name}");
+                if (data != null)
+                {
+                    _items.Add(data);
+                }
+                else
+                {
+                    // Fallback: search all ItemData in project (slow, but works for small projects)
+                    // In this context, we'll just log a warning if not found in Resources.
+                    Debug.LogWarning($"[Inventory] Could not find ItemData for {name}. Make sure it's in Resources/Items/");
+                }
+            }
+        }
     }
 }

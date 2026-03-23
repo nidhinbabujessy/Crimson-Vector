@@ -216,5 +216,10 @@ namespace Game.Player.Controllers
             }
             return transform.rotation;
         }
+        public void RestoreAmmo(int amount)
+        {
+            _currentAmmo = Mathf.Clamp(amount, 0, _maxAmmo);
+            GameEvents.OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
+        }
     }
 }
