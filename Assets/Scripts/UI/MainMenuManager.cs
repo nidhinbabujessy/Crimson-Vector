@@ -24,6 +24,9 @@ namespace Game.UI
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            // Cap Frame Rate to prevent high CPU/GPU usage in menus
+            Application.targetFrameRate = 60;
         }
 
         public void PlayGame()

@@ -5274,7 +5274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.VictoryUI
   _victoryPanel: {fileID: 1821851941}
-  _menuSceneName: MenuScene
+  _menuSceneName: MainMenu
 --- !u!1 &1131009085
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ namespace Game.UI
     {
         [Header("References")]
         [SerializeField] private GameObject _gameOverPanel;
-        [SerializeField] private string _menuSceneName = "MenuScene";
+        [SerializeField] private string _menuSceneName = "MainMenu";
 
         private void Awake()
         {
