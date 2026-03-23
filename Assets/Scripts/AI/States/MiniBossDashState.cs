@@ -27,6 +27,7 @@ namespace Game.AI.States
 
             _ai.StopMovement();
             _ai.GetComponent<Common.EnemyAnimation>()?.PlayRun(); // Dash typically looks like a fast run
+            Game.Core.Events.GameEvents.OnBossDash?.Invoke();
             Debug.Log($"[{_ai.gameObject.name}] Dashing towards player!");
         }
 

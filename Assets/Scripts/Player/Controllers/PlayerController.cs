@@ -161,8 +161,20 @@ namespace Game.Player.Controllers
             MovementInput = new Vector2(horizontal, vertical).normalized;
 
             DashInput = Input.GetKeyDown(KeyCode.Space);
+            if (DashInput) GameEvents.OnPlayerDash?.Invoke();
+            
             AttackInput = Input.GetMouseButtonDown(0);
+
+            // Movement sound hook
+            bool isMoving = MovementInput.sqrMagnitude > 0.01f;
+            if (isMoving != _wasMoving)
+            {
+                _wasMoving = isMoving;
+                GameEvents.OnPlayerMoveChange?.Invoke(isMoving);
+            }
         }
+
+        private bool _wasMoving;
 
         // --- Event Handlers ---
         private void HandleDamaged(int currentHealth)

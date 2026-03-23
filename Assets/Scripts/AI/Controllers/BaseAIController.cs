@@ -103,6 +103,8 @@ namespace Game.AI.Controllers
             StopMovement();
             Agent.enabled = false;
             
+            Game.Core.Events.GameEvents.OnEnemyDeath?.Invoke();
+            
             // Play death animation
             GetComponent<Common.EnemyAnimation>()?.PlayDie();
             

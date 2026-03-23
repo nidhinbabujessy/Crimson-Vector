@@ -49,6 +49,7 @@ namespace Game.AI.States
         private void PerformAreaAttack()
         {
             _hasAttacked = true;
+            Game.Core.Events.GameEvents.OnBossAreaAttack?.Invoke();
             Debug.Log($"[{_ai.gameObject.name}] BOOM! Area Attack triggered.");
             
             Collider[] hits = Physics.OverlapSphere(_ai.transform.position, Radius, _ai.TargetLayer);

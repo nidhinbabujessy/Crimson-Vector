@@ -48,6 +48,8 @@ namespace Game.Player.States
             }
 
             _player.ConsumeAmmo();
+            Game.Core.Events.GameEvents.OnPlayerAttack?.Invoke();
+
             GameObject projectileObj = Object.Instantiate(_player.ProjectilePrefab, _player.ShootPoint.position, _player.ShootPoint.rotation);
             if (projectileObj.TryGetComponent(out Game.AI.Common.Projectile projectile))
             {

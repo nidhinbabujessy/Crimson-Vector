@@ -24,6 +24,9 @@ namespace Game.AI.States
             // Disable controller to stop further updates
             _ai.enabled = false;
             
+            // Trigger victory event
+            Game.Core.Events.GameEvents.OnBossDied?.Invoke();
+            
             Debug.Log($"[{_ai.gameObject.name}] Mini Boss is DEAD. Disabling all actions.");
         }
 

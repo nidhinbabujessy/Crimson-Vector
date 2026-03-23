@@ -36,6 +36,7 @@ namespace Game.AI.States
 
             // Trigger Transition animation
             _ai.GetComponent<Common.EnemyAnimation>()?.PlayIdle(); // Or a specific transition animation if available
+            Game.Core.Events.GameEvents.OnBossPhaseTransition?.Invoke();
             Debug.Log($"[{_ai.gameObject.name}] Initiating Phase Transition! Invulnerability ACTIVE.");
         }
 

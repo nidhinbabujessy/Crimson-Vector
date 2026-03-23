@@ -68,6 +68,7 @@ namespace Game.AI.States
             
             // Trigger animation
             _ai.GetComponent<Common.EnemyAnimation>()?.PlayAttack();
+            Game.Core.Events.GameEvents.OnEnemyAttack?.Invoke();
 
             if (_isRanged)
             {
