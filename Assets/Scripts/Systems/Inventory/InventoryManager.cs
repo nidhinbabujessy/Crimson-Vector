@@ -27,6 +27,12 @@ namespace Game.Systems.Inventory
         {
             _items.Add(item);
             Debug.Log($"[Inventory] Added {item.ItemName}. Total items: {_items.Count}");
+
+            // Show hint if it's a health item
+            if (item is HealthItemData)
+            {
+                GameEvents.OnShowHint?.Invoke("Press U to heal", 3f);
+            }
         }
 
         public void RemoveItem(ItemData item)

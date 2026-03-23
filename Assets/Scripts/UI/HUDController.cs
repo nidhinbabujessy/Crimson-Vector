@@ -27,6 +27,7 @@ namespace Game.UI
             GameEvents.OnPlayerDamaged += UpdateHealth;
             GameEvents.OnAmmoChanged += UpdateAmmo;
             GameEvents.OnObjectiveChanged += UpdateObjective;
+            GameEvents.OnShowHint += ShowTemporaryHint;
         }
 
         private void OnDisable()
@@ -34,6 +35,23 @@ namespace Game.UI
             GameEvents.OnPlayerDamaged -= UpdateHealth;
             GameEvents.OnAmmoChanged -= UpdateAmmo;
             GameEvents.OnObjectiveChanged -= UpdateObjective;
+            GameEvents.OnShowHint -= ShowTemporaryHint;
+        }
+
+        private Coroutine _hintCoroutine;
+
+        private void ShowTemporaryHint(string message, float duration)
+        {
+            if (_hintCoroutine != null) StopCoroutine(_hintCoroutine);
+            _hintCoroutine = StartCoroutine(HintSequence(message, duration));
+        }
+
+        private System.Collections.IEnumerator HintSequence(string message, float duration)
+        {
+            UpdateObjective(message);
+            yield return new WaitForSeconds(duration);
+            UpdateObjective(string.Empty);
+            _hintCoroutine = null;
         }
 
         private void UpdateHealth(int current, int max)

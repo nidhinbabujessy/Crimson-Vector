@@ -36,5 +36,8 @@ namespace Game.Core.Events
 
         // Movement
         public static Action<bool> OnPlayerMoveChange; // isMoving
+
+        // Hints
+        public static Action<string, float> OnShowHint; // message, duration
     }
 }
